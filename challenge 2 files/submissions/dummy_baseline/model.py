@@ -1,6 +1,10 @@
 import torch
 import torch.nn as nn
 
+from config import KERNEL_SIZE
+from config import PADDING
+from config import DROPOUT
+from config import HIDDEN_SIZE_MLP
 
 class ModelArchitecture(nn.Module):
     """
