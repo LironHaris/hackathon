@@ -300,7 +300,7 @@ def main():
         print(f"Loaded weights from {CHECKPOINT}")
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    optimizer = optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=0.01)
 
     print("\nStarting Training Pipeline...")
     trainer = ModelTrainer(
