@@ -21,7 +21,7 @@ from model import ModelArchitecture
 # --- Training Configurations ---
 LEARNING_RATE = 0.001
 BATCH_SIZE = 64
-NUM_EPOCHS = 5
+NUM_EPOCHS = 10
 NUM_WORKERS = 2
 CHECKPOINT = "checkpoints/best_model_20260625_163226.pth"  # Set to a .pth path to resume from saved weights, e.g. "checkpoints/best_model_20260625_143201.pth"
 _DIR = os.path.dirname(os.path.abspath(__file__))
@@ -70,6 +70,13 @@ def get_transforms():
     val_transform = T.Compose([
         SquarePad(),
         T.Resize((224, 224)),
+
+        # --- Augmentations for Validation (Minimal) ---
+        T.RandomAffine(degrees=0, translate=(0.05, 0.05), shear=5),
+        T.ColorJitter(brightness=0.1, contrast=0.3, saturation=0.3, hue=0.2),
+        T.GaussianBlur(kernel_size=5, sigma=(0.5, 1.5)),
+
+        # --- Tensor Conversions ---
         T.ToTensor(),
         T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])

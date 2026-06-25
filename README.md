@@ -166,11 +166,26 @@ hyper parameters:
 
 ## sixth run
 
+first part
 - accuracy : 69.75 %
 - best val loss (epoch ): 1
 - last val loss: 1.03
 - last train loss : 1.32
 - epochs : 15
+
+second part
+- accuracy : 75.82 %
+- best val loss (epoch ): 0.8
+- last val loss: 0.89
+- last train loss : 0.97
+- epochs : 15
+
+third part - less augentation settings
+- accuracy : 79.14 %
+- best val loss (epoch ): 0.68
+- last val loss: 0.72
+- last train loss : 0.8
+- epochs : 10
 
 data split: 56% train / 14% val / 30% test (stratified, test kept as clean held-out set)
 
