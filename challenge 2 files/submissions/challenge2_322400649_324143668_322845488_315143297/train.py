@@ -3,7 +3,7 @@
 import os
 import random
 import numpy as np
-from datetime import datetime
+import joblib
 import pandas as pd
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -23,10 +23,10 @@ LEARNING_RATE = 0.001
 BATCH_SIZE = 64
 NUM_EPOCHS = 15
 NUM_WORKERS = 2
-CHECKPOINT = "checkpoints/best_model_20260625_142200.pth"  # Set to a .pth path to resume from saved weights, e.g. "checkpoints/best_model_20260625_143201.pth"
 _DIR = os.path.dirname(os.path.abspath(__file__))
 TRAIN_CSV = os.path.join(_DIR, "train_split.csv")
 VAL_CSV = os.path.join(_DIR, "val_split.csv")
+WEIGHTS_PATH = os.path.join(_DIR, "weights.joblib")  # required submission artifact
 
 
 def seed_everything(seed: int = 42):
@@ -170,7 +170,7 @@ class ModelTrainer:
 
     def __init__(self, model: nn.Module, train_loader: DataLoader, val_loader: DataLoader,
                  criterion: nn.Module, optimizer: optim.Optimizer, device: torch.device,
-                 num_epochs: int, save_dir: str = "checkpoints"):
+                 num_epochs: int, weights_path: str = "weights.joblib"):
 
         self.model = model.to(device)
         self.train_loader = train_loader
@@ -180,9 +180,7 @@ class ModelTrainer:
         self.device = device
         self.num_epochs = num_epochs
 
-        self.save_dir = save_dir
-        os.makedirs(self.save_dir, exist_ok=True)
-        self._run_ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.weights_path = weights_path
 
         self.history = {'train_loss': [], 'val_loss': [], 'val_acc': []}
 
@@ -203,9 +201,10 @@ class ModelTrainer:
 
             if val_acc > best_val_acc:
                 best_val_acc = val_acc
-                save_path = os.path.join(self.save_dir, f"best_model_{self._run_ts}.pth")
-                torch.save(self.model.state_dict(), save_path)
-                print(f"🌟 New best model saved! (Accuracy: {best_val_acc:.2f}%)")
+                # Save the best weights as a CPU state dict for hardware-independent loading.
+                cpu_state = {k: v.detach().cpu() for k, v in self.model.state_dict().items()}
+                joblib.dump(cpu_state, self.weights_path)
+                print(f"🌟 New best model saved to {self.weights_path}! (Accuracy: {best_val_acc:.2f}%)")
 
         print(f"\nTraining completed! Best Validation Accuracy: {best_val_acc:.2f}%")
         return self.history
@@ -299,11 +298,7 @@ def main():
     )
 
     print("\nInitializing Model...")
-    model = ModelArchitecture(num_classes=20)
-
-    if CHECKPOINT:
-        model.load_state_dict(torch.load(CHECKPOINT, map_location=device))
-        print(f"Loaded weights from {CHECKPOINT}")
+    model = ModelArchitecture(num_classes=20)  # trained from scratch (random init)
 
     criterion = nn.CrossEntropyLoss(label_smoothing=0.05)
     optimizer = optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=1e-2)
@@ -317,7 +312,7 @@ def main():
         optimizer=optimizer,
         device=device,
         num_epochs=NUM_EPOCHS,
-        save_dir="checkpoints"
+        weights_path=WEIGHTS_PATH
     )
 
     history = trainer.train()
