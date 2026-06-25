@@ -22,8 +22,9 @@ LEARNING_RATE = 0.001
 BATCH_SIZE = 32
 NUM_EPOCHS = 25
 NUM_WORKERS = 2
-TRAIN_CSV = "train_split.csv"
-VAL_CSV = "val_split.csv"
+_DIR = os.path.dirname(os.path.abspath(__file__))
+TRAIN_CSV = os.path.join(_DIR, "train_split.csv")
+VAL_CSV = os.path.join(_DIR, "val_split.csv")
 
 
 def seed_everything(seed: int = 42):
@@ -85,8 +86,9 @@ class RobustObjectDataset(Dataset):
     A PyTorch Dataset that lazily loads images from a DataFrame using PIL.
     """
 
-    def __init__(self, df: pd.DataFrame, transform=None):
+    def __init__(self, df: pd.DataFrame, transform=None, base_dir: str = None):
         self.df = df
+        self.base_dir = base_dir
         self.transform = transform
         if self.transform is None:
             _, self.transform = get_transforms()
@@ -97,6 +99,8 @@ class RobustObjectDataset(Dataset):
     def __getitem__(self, idx: int) -> tuple:
         row = self.df.iloc[idx]
         image_path = row['image_path']
+        if self.base_dir and not os.path.isabs(image_path):
+            image_path = os.path.normpath(os.path.join(self.base_dir, image_path))
         label = row['label']
 
         try:
@@ -119,8 +123,8 @@ def get_dataloaders(train_csv_path: str, val_csv_path: str, batch_size: int, num
 
     train_transform, val_transform = get_transforms()
 
-    train_dataset = RobustObjectDataset(df=df_train, transform=train_transform)
-    val_dataset = RobustObjectDataset(df=df_val, transform=val_transform)
+    train_dataset = RobustObjectDataset(df=df_train, transform=train_transform, base_dir=_DIR)
+    val_dataset = RobustObjectDataset(df=df_val, transform=val_transform, base_dir=_DIR)
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
@@ -223,7 +227,7 @@ def plot_training_results(history: dict, save_dir: str = "plots"):
     os.makedirs(save_dir, exist_ok=True)
     epochs = range(1, len(history['train_loss']) + 1)
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+    _, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
 
     ax1.plot(epochs, history['train_loss'], label='Train Loss', color='blue', marker='o')
     ax1.plot(epochs, history['val_loss'], label='Validation Loss', color='red', marker='o')
