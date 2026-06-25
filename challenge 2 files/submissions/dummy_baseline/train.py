@@ -23,7 +23,7 @@ LEARNING_RATE = 0.001
 BATCH_SIZE = 64
 NUM_EPOCHS = 15
 NUM_WORKERS = 2
-CHECKPOINT = "checkpoints/best_model_20260625_125133.pth"  # Set to a .pth path to resume from saved weights, e.g. "checkpoints/best_model_20260625_143201.pth"
+CHECKPOINT = "checkpoints/best_model_20260625_121739.pth"  # Set to a .pth path to resume from saved weights, e.g. "checkpoints/best_model_20260625_143201.pth"
 _DIR = os.path.dirname(os.path.abspath(__file__))
 TRAIN_CSV = os.path.join(_DIR, "train_split.csv")
 VAL_CSV = os.path.join(_DIR, "val_split.csv")
@@ -93,7 +93,7 @@ def get_transforms():
 
         # Gaussian Blur (20% chance to apply a slight blur)
         T.RandomApply([T.GaussianBlur(kernel_size=5, sigma=(0.1, 2.0))], p=0.2),
-
+        T.RandomPerspective(p=0.25,distortion_scale=0.3),
         # --- Tensor Conversions and Tensor Augmentations ---
         T.ToTensor(),
         T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),

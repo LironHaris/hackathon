@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 
 # --- Model Hyperparameters ---
-KERNEL_SIZE = 3  # Standardized to 3x3 for deeper networks
-PADDING = 1
+KERNEL_SIZE = 5  # Standardized to 5x5 for deeper networks
+PADDING = 2
 DROPOUT = 0.3
-HIDDEN_SIZE_MLP = 256  # Increased slightly to handle 20 classes better
+HIDDEN_SIZE_MLP = 512  # Increased slightly to handle 20 classes better
 
 
 class ModelArchitecture(nn.Module):
@@ -45,8 +45,11 @@ class ModelArchitecture(nn.Module):
             nn.Conv2d(64, 128, kernel_size=KERNEL_SIZE, padding=PADDING),
             nn.BatchNorm2d(128),
             nn.ReLU(),
-            nn.MaxPool2d(4),
-
+            nn.MaxPool2d(2),
+            # Block 5
+            nn.Conv2d(128, 128, kernel_size=KERNEL_SIZE, padding=PADDING,stride=2),
+            nn.BatchNorm2d(128),
+            nn.ReLU()
         )
 
         # 128 channels * 7 * 7 = 6272 (28x28 after block 3, then MaxPool2d(4) → 7x7)
