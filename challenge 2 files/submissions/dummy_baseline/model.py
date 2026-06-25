@@ -45,20 +45,22 @@ class ModelArchitecture(nn.Module):
             nn.Conv2d(64, 128, kernel_size=KERNEL_SIZE, padding=PADDING),
             nn.BatchNorm2d(128),
             nn.ReLU(),
-            nn.MaxPool2d(4),
-
+            # Block 5
+            nn.conv2d(128, 128, kernel_size=KERNEL_SIZE, padding=PADDING,stride=2),
+            nn.BatchNorm2d(128),
+            nn.ReLU()
         )
 
-        # 128 channels * 7 * 7 = 6272 (28x28 after block 3, then MaxPool2d(4) → 7x7)
-        flatten_dim = 128 * 7 * 7
+        # 128 channels * 6 * 6 = 4608 (28x28 after block 3, then MaxPool2d(4) → 7x7)
+        flatten_dim = 128 * 6 * 6
 
         # Classifier
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(flatten_dim, HIDDEN_SIZE_MLP),
+            nn.Linear(flatten_dim, HIDDEN_SIZE_MLP*2),
             nn.ReLU(),
             nn.Dropout(p=DROPOUT),
-            nn.Linear(HIDDEN_SIZE_MLP, num_classes)
+            nn.Linear(HIDDEN_SIZE_MLP*2, num_classes)
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
