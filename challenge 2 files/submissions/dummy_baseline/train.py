@@ -19,7 +19,7 @@ from model import ModelArchitecture
 
 # --- Training Configurations ---
 LEARNING_RATE = 0.001
-BATCH_SIZE = 32
+BATCH_SIZE = 64
 NUM_EPOCHS = 10
 NUM_WORKERS = 2
 _DIR = os.path.dirname(os.path.abspath(__file__))
