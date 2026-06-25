@@ -21,7 +21,7 @@ from model import ModelArchitecture
 # --- Training Configurations ---
 LEARNING_RATE = 0.001
 BATCH_SIZE = 64
-NUM_EPOCHS = 5
+NUM_EPOCHS = 15
 NUM_WORKERS = 2
 CHECKPOINT = "checkpoints/best_model_20260625_142200.pth"  # Set to a .pth path to resume from saved weights, e.g. "checkpoints/best_model_20260625_143201.pth"
 _DIR = os.path.dirname(os.path.abspath(__file__))
