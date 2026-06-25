@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 # --- Model Hyperparameters ---
-KERNEL_SIZE = 3  # Standardized to 3x3 for deeper networks
+KERNEL_SIZE = 3  # Standardized to 5x5 for deeper networks
 PADDING = 1
 DROPOUT = 0.3
 HIDDEN_SIZE_MLP = 256  # Increased slightly to handle 20 classes better
