@@ -1,6 +1,12 @@
 import torch
 import torch.nn as nn
 
+from config import KERNEL_SIZE
+from config import PADDING
+from config import DROPOUT
+from config import HIDDEN_SIZE_MLP
+
+
 
 class ModelArchitecture(nn.Module):
     """
@@ -16,14 +22,24 @@ class ModelArchitecture(nn.Module):
     def __init__(self, num_classes: int = 20):
         super().__init__()
 
-        # TODO: write your model architecture here
-        # Example:
-        #   define layers
-        #   define feature extractor
-        #   define classifier
-        #   define any other modules needed
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 16, kernel_size=KERNEL_SIZE, padding=PADDING),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
 
-        raise NotImplementedError("TODO: implement ModelArchitecture.__init__")
+            nn.Conv2d(16, 32, kernel_size=KERNEL_SIZE, padding=PADDING),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+        )
+
+        with torch.no_grad():
+            flatten_dim = self.features(torch.zeros(1, 3, 224, 224)).numel()
+
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(flatten_dim, HIDDEN_SIZE_MLP),
+            nn.ReLU()
+        )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -35,8 +51,6 @@ class ModelArchitecture(nn.Module):
         Returns:
             logits for 20 classes
         """
-
-        # TODO: write the forward pass here
-        # The returned tensor should have shape [batch_size, 20]
-
-        raise NotImplementedError("TODO: implement ModelArchitecture.forward")
+        x = self.features(x)
+        logits = self.classifier(x)
+        return logits
