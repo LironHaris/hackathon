@@ -45,14 +45,11 @@ class ModelArchitecture(nn.Module):
             nn.Conv2d(64, 128, kernel_size=KERNEL_SIZE, padding=PADDING),
             nn.BatchNorm2d(128),
             nn.ReLU(),
-            nn.MaxPool2d(2),
+            nn.MaxPool2d(4),
 
-            # Adaptive Pooling forces the spatial dimensions to exactly 4x4
-            # regardless of input image size, eliminating massive linear layers.
-            nn.AdaptiveAvgPool2d((7, 7))
         )
 
-        # 128 channels * 7 * 7 = 6272 (14x14 after 4 MaxPool2d(2), 14/7=2 is MPS-compatible)
+        # 128 channels * 7 * 7 = 6272 (28x28 after block 3, then MaxPool2d(4) → 7x7)
         flatten_dim = 128 * 7 * 7
 
         # Classifier
