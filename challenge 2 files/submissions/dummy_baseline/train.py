@@ -62,6 +62,8 @@ class SquarePad:
 def get_transforms():
     """
     Returns separate torchvision augmentation pipelines for training and validation.
+    The training pipeline includes various augmentations for robust feature learning,
+    such as rotation, flipping, color jittering, blur, and random erasing.
     """
     val_transform = T.Compose([
         SquarePad(),
@@ -73,13 +75,33 @@ def get_transforms():
     train_transform = T.Compose([
         SquarePad(),
         T.Resize((224, 224)),
-        # Add future specific training augmentations here
+
+        # --- PIL Image Augmentations ---
+        # Horizontal Flip (50% chance)
+        T.RandomHorizontalFlip(p=0.5),
+
+        # Random Rotation (between -15 and +15 degrees)
+        T.RandomRotation(degrees=15),
+
+        # Color Jitter (Randomly changes brightness, contrast, saturation, and hue)
+        T.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+
+        # Grayscale/Black & White (10% chance to convert image to grayscale)
+        T.RandomGrayscale(p=0.1),
+
+        # Gaussian Blur (20% chance to apply a slight blur)
+        T.RandomApply([T.GaussianBlur(kernel_size=5, sigma=(0.1, 2.0))], p=0.2),
+
+        # --- Tensor Conversions and Tensor Augmentations ---
         T.ToTensor(),
-        T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+
+        # Random Erasing (Simulates occlusion and forces the model to ignore background dependence)
+        # Note: Must be applied after ToTensor() because it requires a tensor input.
+        T.RandomErasing(p=0.2, scale=(0.02, 0.2), ratio=(0.3, 3.3), value=0, inplace=False)
     ])
 
     return train_transform, val_transform
-
 
 class RobustObjectDataset(Dataset):
     """
