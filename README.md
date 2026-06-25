@@ -66,3 +66,50 @@ hyper parameters:
 - padding : 1
 - criterion : CrossEntropy
 - optimizer: Adam
+
+
+## third run
+
+- accuracy :
+- best val loss (epoch ):
+- last val loss:
+- last train loss :
+- epochs : 15
+
+architecture:
+- Conv(3, 16)
+- BatchNorm(16)
+- ReLU
+- MaxPooling(2)
+- Conv(16, 32)
+- BatchNorm(32)
+- ReLU
+- MaxPooling(2)
+- Conv(32, 64)
+- BatchNorm(64)
+- ReLU
+- MaxPooling(2)
+- Conv(64, 128)
+- BatchNorm(128)
+- ReLU
+- MaxPooling(4)
+- Linear(6272, 256)
+- ReLU
+- Dropout(0.3)
+- Linear(256, 20)
+
+augmentations:
+- RandomHorizontalFlip(p=0.5)
+- RandomRotation(15)
+- ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)
+- RandomGrayscale(p=0.1)
+- GaussianBlur(p=0.2)
+- RandomErasing(p=0.2)
+
+hyper parameters:
+- learning rate : 0.001
+- batch size : 64
+- kernel size : 3
+- padding : 1
+- criterion : CrossEntropy
+- optimizer: Adam
