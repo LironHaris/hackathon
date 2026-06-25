@@ -49,11 +49,11 @@ class ModelArchitecture(nn.Module):
 
             # Adaptive Pooling forces the spatial dimensions to exactly 4x4
             # regardless of input image size, eliminating massive linear layers.
-            nn.AdaptiveAvgPool2d((4, 4))
+            nn.AdaptiveAvgPool2d((7, 7))
         )
 
-        # Flatten dimension is now fixed: 128 channels * 4 height * 4 width = 2048
-        flatten_dim = 128 * 4 * 4
+        # 128 channels * 7 * 7 = 6272 (14x14 after 4 MaxPool2d(2), 14/7=2 is MPS-compatible)
+        flatten_dim = 128 * 7 * 7
 
         # Classifier
         self.classifier = nn.Sequential(
