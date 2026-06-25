@@ -23,6 +23,7 @@ LEARNING_RATE = 0.001
 BATCH_SIZE = 64
 NUM_EPOCHS = 15
 NUM_WORKERS = 2
+CHECKPOINT = "checkpoints/best_model_20260625_122735.pth"  # Set to a .pth path to resume from saved weights, e.g. "checkpoints/best_model_20260625_143201.pth"
 _DIR = os.path.dirname(os.path.abspath(__file__))
 TRAIN_CSV = os.path.join(_DIR, "train_split.csv")
 VAL_CSV = os.path.join(_DIR, "val_split.csv")
@@ -293,6 +294,10 @@ def main():
 
     print("\nInitializing Model...")
     model = ModelArchitecture(num_classes=20)
+
+    if CHECKPOINT:
+        model.load_state_dict(torch.load(CHECKPOINT, map_location=device))
+        print(f"Loaded weights from {CHECKPOINT}")
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
