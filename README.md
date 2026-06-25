@@ -215,3 +215,46 @@ hyper parameters:
 - dropout : 0.3
 - criterion : CrossEntropy
 - optimizer: AdamW (weight decay 1e-2)
+
+
+## seventh run
+first part
+- accuracy : 69.75 %
+- best val loss (epoch ): 1
+- last val loss: 1.03
+- last train loss : 1.32
+- epochs : 15
+
+second part
+- accuracy : 75.82 %
+- best val loss (epoch ): 0.8
+- last val loss: 0.89
+- last train loss : 0.97
+- epochs : 15
+
+second part
+- accuracy : 75.82 %
+- best val loss (epoch ): 0.8
+- last val loss: 0.89
+- last train loss : 0.97
+- epochs : 5
+
+## Final Architecture
+all kernels- 5X5 , stride-1/2 in last layer, padding- 2, dropout-0.3 for MLP head,hidden size- 512  
+Layer 1->4:
+- Con2d 3->16->32->64->128
+- BatchNorm
+- Relu
+- MaxPool(2)
+layer 5:
+- Conv2d 128->128 stride-2
+- BatchNorm
+- Relu
+
+MLP Head:
+- flatten
+- linear 6272->512
+- Relu
+- linear 512->20
+
+## runs
