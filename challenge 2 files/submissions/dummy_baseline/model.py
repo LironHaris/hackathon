@@ -1,48 +1,56 @@
 import torch
 import torch.nn as nn
 
-from config import KERNEL_SIZE
-from config import PADDING
-from config import DROPOUT
-from config import HIDDEN_SIZE_MLP
+# --- Model Hyperparameters ---
+KERNEL_SIZE = 5
+PADDING = 1
+DROPOUT = 0.3
+HIDDEN_SIZE_MLP = 128
 
 class ModelArchitecture(nn.Module):
     """
-    Dummy CNN.
+    Student model architecture.
 
-    This is a real torch CNN module, but it is intentionally useless:
-    all weights are initialized to zero, so all logits are identical.
-    argmax will always return class 0.
+    Students should define their model here.
+
+    Required behavior:
+        input:  torch.Tensor of shape [batch_size, 3, height, width]
+        output: torch.Tensor of shape [batch_size, 20]
     """
 
     def __init__(self, num_classes: int = 20):
         super().__init__()
 
         self.features = nn.Sequential(
-            nn.Conv2d(3, 4, kernel_size=3, padding=1),
+            nn.Conv2d(3, 16, kernel_size=KERNEL_SIZE, padding=PADDING),
             nn.ReLU(),
             nn.MaxPool2d(2),
 
-            nn.Conv2d(4, 8, kernel_size=3, padding=1),
+            nn.Conv2d(16, 32, kernel_size=KERNEL_SIZE, padding=PADDING),
             nn.ReLU(),
-            nn.AdaptiveAvgPool2d((1, 1)),
+            nn.MaxPool2d(2),
         )
+
+        with torch.no_grad():
+            flatten_dim = self.features(torch.zeros(1, 3, 224, 224)).numel()
 
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(8, num_classes),
+            nn.Linear(flatten_dim, HIDDEN_SIZE_MLP),
+            nn.ReLU(),
+            nn.Linear(HIDDEN_SIZE_MLP, num_classes)
         )
 
-        self._initialize_dummy_weights()
-
-    def _initialize_dummy_weights(self) -> None:
-        """
-        Force the network to predict class 0 for every image.
-        """
-        for param in self.parameters():
-            nn.init.constant_(param, 0.0)
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Forward pass.
+
+        Args:
+            x: batch of images
+
+        Returns:
+            logits for 20 classes
+        """
         x = self.features(x)
         logits = self.classifier(x)
         return logits
