@@ -3,6 +3,7 @@
 import os
 import random
 import numpy as np
+from datetime import datetime
 import pandas as pd
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -20,7 +21,7 @@ from model import ModelArchitecture
 # --- Training Configurations ---
 LEARNING_RATE = 0.001
 BATCH_SIZE = 64
-NUM_EPOCHS = 10
+NUM_EPOCHS = 15
 NUM_WORKERS = 2
 _DIR = os.path.dirname(os.path.abspath(__file__))
 TRAIN_CSV = os.path.join(_DIR, "train_split.csv")
@@ -152,6 +153,7 @@ class ModelTrainer:
 
         self.save_dir = save_dir
         os.makedirs(self.save_dir, exist_ok=True)
+        self._run_ts = datetime.now().strftime("%Y%m%d_%H%M%S")
 
         self.history = {'train_loss': [], 'val_loss': [], 'val_acc': []}
 
@@ -172,7 +174,7 @@ class ModelTrainer:
 
             if val_acc > best_val_acc:
                 best_val_acc = val_acc
-                save_path = os.path.join(self.save_dir, "best_model.pth")
+                save_path = os.path.join(self.save_dir, f"best_model_{self._run_ts}.pth")
                 torch.save(self.model.state_dict(), save_path)
                 print(f"🌟 New best model saved! (Accuracy: {best_val_acc:.2f}%)")
 
