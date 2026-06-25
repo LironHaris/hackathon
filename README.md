@@ -4,6 +4,43 @@ Michal Sacharen 324143668
 Noam Lin 322845488
 Yotam Kashai 315143297
 
+## Final Architecture
+all kernels- 5X5 , stride-1,2 in last layer, padding- 2, dropout-0.3 for MLP head,hidden size- 512  
+### Layer 1 --> 4:
+- Con2d 3->16->32->64->128
+- BatchNorm
+- Relu
+- MaxPool(2)
+### layer 5:
+- Conv2d 128->128 stride-2
+- BatchNorm
+- Relu
+
+### MLP Head:
+- flatten
+- linear 6272->512
+- Relu
+- linear 512->20
+
+### augmentations on training:
+- RandomHorizontalFlip(p=0.5)
+- RandomRotation(15)
+- ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)
+- RandomGrayscale(p=0.1)
+- GaussianBlur(p=0.2)
+- RandomErasing(p=0.2)
+- Fine-tuned with TrivialRandomWide
+
+## results:
+- accuracy : 80%
+- best val loss: 0.8
+- epochs : 40
+- trained on 80% of data
+
+---------------------------------------
+
+## Iterations throughout the process ##
+
 ## first run
 
 - accuracy : 30 %
@@ -214,46 +251,3 @@ hyper parameters:
 - dropout : 0.3
 - criterion : CrossEntropy
 - optimizer: AdamW (weight decay 1e-2)
-
-
-## seventh run
-first part
-- accuracy : 69.75 %
-- best val loss (epoch ): 1
-- last val loss: 1.03
-- last train loss : 1.32
-- epochs : 15
-
-second part
-- accuracy : 75.82 %
-- best val loss (epoch ): 0.8
-- last val loss: 0.89
-- last train loss : 0.97
-- epochs : 15
-
-second part
-- accuracy : 75.82 %
-- best val loss (epoch ): 0.8
-- last val loss: 0.89
-- last train loss : 0.97
-- epochs : 5
-
-## Final Architecture
-all kernels- 5X5 , stride-1/2 in last layer, padding- 2, dropout-0.3 for MLP head,hidden size- 512  
-Layer 1->4:
-- Con2d 3->16->32->64->128
-- BatchNorm
-- Relu
-- MaxPool(2)
-layer 5:
-- Conv2d 128->128 stride-2
-- BatchNorm
-- Relu
-
-MLP Head:
-- flatten
-- linear 6272->512
-- Relu
-- linear 512->20
-
-## runs

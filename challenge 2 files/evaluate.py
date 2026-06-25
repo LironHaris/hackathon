@@ -31,8 +31,8 @@ from labels import (
 )
 
 # ── editable ──────────────────────────────────────────────────────────────────
-DATA_ROOT = Path("dataset")   # contains train/ and validation/
-SUBMISSIONS_DIR = Path("submissions")
+DATA_ROOT = Path(__file__).resolve().parent / "dataset"   # contains train/ and validation/
+SUBMISSIONS_DIR = Path(__file__).resolve().parent / "submissions"
 BATCH_SIZE = 64
 WEIGHTS_FILENAME = "weights.joblib"
 # ──────────────────────────────────────────────────────────────────────────────
