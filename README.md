@@ -1,4 +1,8 @@
 # hackathon
+Liron Haris 322400649
+Michal Sacharen 324143668
+Noam Lin 322845488
+Yotam Kashai 315143297
 
 ## first run
 
@@ -70,10 +74,10 @@ hyper parameters:
 
 ## third run
 
-- accuracy :
-- best val loss (epoch ):
-- last val loss:
-- last train loss :
+- accuracy : 60.5 %
+- best val loss (epoch ): 1.29
+- last val loss: 1.29
+- last train loss : 1.58
 - epochs : 15
 
 architecture:
@@ -117,10 +121,10 @@ hyper parameters:
 
 ## fourth run
 
-- accuracy :
-- best val loss (epoch ):
-- last val loss:
-- last train loss :
+- accuracy : 67.25 %
+- best val loss (epoch ): 1.05
+- last val loss: 1.18
+- last train loss : 1.26
 - epochs : 15
 - resumed from : best_model_20260625_122735.pth
 
@@ -135,3 +139,26 @@ hyper parameters:
 - padding : 1
 - criterion : CrossEntropy
 - optimizer: Adam
+
+
+## fifth run
+
+- accuracy : 73 %
+- best val loss (epoch ): 0.88
+- last val loss: 0.88
+- last train loss : 1.15
+- epochs : 15
+
+data split: 56% train / 14% val / 30% test (stratified, test kept as clean held-out set)
+
+architecture: same as third run
+
+augmentations: same as third run
+
+hyper parameters:
+- learning rate : 0.001
+- batch size : 64
+- kernel size : 3
+- padding : 1
+- criterion : CrossEntropy
+- optimizer: AdamW
