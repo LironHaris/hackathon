@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 # --- Model Hyperparameters ---
 KERNEL_SIZE = 5  # Standardized to 5x5 for deeper networks
@@ -20,7 +21,6 @@ class ModelArchitecture(nn.Module):
 
     def __init__(self, num_classes: int = 20):
         super().__init__()
-
         # Feature extractor with 4 Convolutional blocks
         self.features = nn.Sequential(
             # Block 1
@@ -64,16 +64,36 @@ class ModelArchitecture(nn.Module):
             nn.Linear(HIDDEN_SIZE_MLP, num_classes)
         )
 
+    def _resize_to_square(self, x: torch.Tensor, target_size: int = 224) -> torch.Tensor:
+        """
+        Pads a [B, 3, H, W] batch to a square (preserving aspect ratio, no
+        distortion) and resizes it to (target_size, target_size), so the
+        model can accept input images of any size.
+        """
+        _, _, h, w = x.shape
+        max_wh = max(h, w)
+        p_left = (max_wh - w) // 2
+        p_right = max_wh - w - p_left
+        p_top = (max_wh - h) // 2
+        p_bottom = max_wh - h - p_top
+
+        x = F.pad(x, (p_left, p_right, p_top, p_bottom), mode='constant', value=0)
+        if max_wh != target_size:
+            x = F.interpolate(x, size=(target_size, target_size), mode='bilinear', align_corners=False)
+        return x
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Forward pass of the model.
 
         Args:
-            x (torch.Tensor): A batch of input images.
+            x (torch.Tensor): A batch of input images, shape [B, 3, H, W]
+                for any H, W.
 
         Returns:
             torch.Tensor: The unnormalized logits for the 20 classes.
         """
+        x = self._resize_to_square(x)
         x = self.features(x)
         logits = self.classifier(x)
         return logits
