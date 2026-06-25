@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 
 # --- Model Hyperparameters ---
-KERNEL_SIZE = 3  # Standardized to 3x3 for deeper networks
-PADDING = 1
+KERNEL_SIZE = 5 # Standardized to 3x3 for deeper networks
+PADDING = 2
 DROPOUT = 0.3
 HIDDEN_SIZE_MLP = 256  # Increased slightly to handle 20 classes better
 
@@ -73,11 +73,15 @@ class ModelArchitecture(nn.Module):
         # Feature extractor with 4 residual blocks (each = 2 conv layers + skip)
         self.features = nn.Sequential(
             # Block 1
-            ResidualBlock(3, 16),
+            nn.Conv2d(3, 16, kernel_size=KERNEL_SIZE, padding=PADDING),
+            nn.BatchNorm2d(16),
+            nn.ReLU(),
             nn.MaxPool2d(2),
 
             # Block 2
-            ResidualBlock(16, 32),
+            nn.Conv2d(16, 32, kernel_size=KERNEL_SIZE, padding=PADDING),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
             nn.MaxPool2d(2),
 
             # Block 3

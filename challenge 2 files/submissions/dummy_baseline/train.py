@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, Dataset
+import torchvision.transforms as T
+import torchvision.transforms.functional as TF
+
 import os
 import random
 import numpy as np
@@ -7,13 +14,6 @@ from datetime import datetime
 import pandas as pd
 from PIL import Image
 import matplotlib.pyplot as plt
-
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import DataLoader, Dataset
-import torchvision.transforms as T
-import torchvision.transforms.functional as TF
 from tqdm import tqdm
 
 from model import ModelArchitecture
@@ -23,7 +23,7 @@ LEARNING_RATE = 0.001
 BATCH_SIZE = 64
 NUM_EPOCHS = 15
 NUM_WORKERS = 2
-CHECKPOINT = "checkpoints/best_model_20260625_125133.pth"  # Set to a .pth path to resume from saved weights, e.g. "checkpoints/best_model_20260625_143201.pth"
+CHECKPOINT = None  # Set to a .pth path to resume from saved weights, e.g. "checkpoints/best_model_20260625_143201.pth"
 _DIR = os.path.dirname(os.path.abspath(__file__))
 TRAIN_CSV = os.path.join(_DIR, "train_split.csv")
 VAL_CSV = os.path.join(_DIR, "val_split.csv")
