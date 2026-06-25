@@ -113,3 +113,25 @@ hyper parameters:
 - padding : 1
 - criterion : CrossEntropy
 - optimizer: Adam
+
+
+## fourth run
+
+- accuracy :
+- best val loss (epoch ):
+- last val loss:
+- last train loss :
+- epochs : 15
+- resumed from : best_model_20260625_122735.pth
+
+architecture: same as third run
+
+augmentations: same as third run
+
+hyper parameters:
+- learning rate : 0.001
+- batch size : 64
+- kernel size : 3
+- padding : 1
+- criterion : CrossEntropy
+- optimizer: Adam
