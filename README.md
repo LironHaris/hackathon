@@ -162,3 +162,98 @@ hyper parameters:
 - padding : 1
 - criterion : CrossEntropy
 - optimizer: AdamW
+
+## sixth run
+
+first part
+- accuracy : 69.75 %
+- best val loss (epoch ): 1
+- last val loss: 1.03
+- last train loss : 1.32
+- epochs : 15
+
+second part
+- accuracy : 75.82 %
+- best val loss (epoch ): 0.8
+- last val loss: 0.89
+- last train loss : 0.97
+- epochs : 15
+
+third part - less augentation settings
+- accuracy : 79.14 %
+- best val loss (epoch ): 0.68
+- last val loss: 0.72
+- last train loss : 0.8
+- epochs : 10
+
+data split: 56% train / 14% val / 30% test (stratified, test kept as clean held-out set)
+
+architecture: 4 residual blocks (each = 2x [Conv -> BatchNorm -> ReLU] + skip connection)
+- ResidualBlock(3, 16)
+- MaxPooling(2)
+- ResidualBlock(16, 32)
+- MaxPooling(2)
+- ResidualBlock(32, 64)
+- MaxPooling(2)
+- ResidualBlock(64, 128)
+- MaxPooling(4)
+- Linear(6272, 256)
+- ReLU
+- Dropout(0.3)
+- Linear(256, 20)
+
+note: skip connection uses element-wise add; 1x1 conv projection on the skip path when channel count changes
+
+augmentations: same as third run
+
+hyper parameters:
+- learning rate : 0.001
+- batch size : 64
+- kernel size : 3
+- padding : 1
+- dropout : 0.3
+- criterion : CrossEntropy
+- optimizer: AdamW (weight decay 1e-2)
+
+
+## seventh run
+first part
+- accuracy : 69.75 %
+- best val loss (epoch ): 1
+- last val loss: 1.03
+- last train loss : 1.32
+- epochs : 15
+
+second part
+- accuracy : 75.82 %
+- best val loss (epoch ): 0.8
+- last val loss: 0.89
+- last train loss : 0.97
+- epochs : 15
+
+second part
+- accuracy : 75.82 %
+- best val loss (epoch ): 0.8
+- last val loss: 0.89
+- last train loss : 0.97
+- epochs : 5
+
+## Final Architecture
+all kernels- 5X5 , stride-1/2 in last layer, padding- 2, dropout-0.3 for MLP head,hidden size- 512  
+Layer 1->4:
+- Con2d 3->16->32->64->128
+- BatchNorm
+- Relu
+- MaxPool(2)
+layer 5:
+- Conv2d 128->128 stride-2
+- BatchNorm
+- Relu
+
+MLP Head:
+- flatten
+- linear 6272->512
+- Relu
+- linear 512->20
+
+## runs
