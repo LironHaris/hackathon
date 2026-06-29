@@ -53,7 +53,7 @@ architecture:
 - Conv(3,16)
 - RelU
 - MaxPooling(2)
-- Conv(3,16)
+- Conv(16,32)
 - RelU
 - MaxPooling(2)
 - Linear(128)
